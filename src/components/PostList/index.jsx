@@ -1,28 +1,40 @@
 import React, { useState } from "react";
-import BlogPost from "../BlogPost";
+import BlogPostCard from "../BlogPostCard";
 
 function PostList() {
   const [postList, setPostList] = useState([
     {
-      title: "Test blog",
+      id: 1,
+      title: "Test post",
+      author: "Juanferax",
+      date: "12/03/2023",
     },
     {
-      title: "Test blog",
+      id: 2,
+      title: "Test post",
+      author: "Juanferax",
+      date: "12/03/2023",
     },
     {
-      title: "Test blog",
+      id: 3,
+      title: "Test post",
+      author: "Juanferax",
+      date: "12/03/2023",
     },
     {
-      title: "Test blog",
+      id: 4,
+      title: "Test post",
+      author: "Juanferax",
+      date: "12/03/2023",
     },
   ]);
 
   return (
-    <div className="px-5">
+    <div className="px-52">
       <p className="text-left text-xl pb-3">Latest posts:</p>
-      <div className="grid grid-cols-2 gap-2 w-full">
+      <div className="grid grid-cols-3 gap-4 w-full">
         {postList.map((post, idx) => {
-          return <BlogPost key={idx} post={post} />;
+          return <BlogPostCard key={idx} post={post} />;
         })}
       </div>
     </div>

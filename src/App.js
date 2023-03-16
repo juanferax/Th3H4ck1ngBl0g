@@ -1,4 +1,3 @@
-import "./App.css";
 import BlogHomeView from "./views/BlogHomeView";
 
 function App() {

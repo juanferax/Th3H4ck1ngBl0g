@@ -6,7 +6,7 @@ function BlogHomeView() {
   return (
     <div className="home">
       <Header />
-      <h1 className="py-5" style={{ fontSize: 50 }}>
+      <h1 className="py-5 text-center" style={{ fontSize: 50 }}>
         Th3 H4ck1ng Bl0g
       </h1>
       <PostList />
