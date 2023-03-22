@@ -1,6 +1,6 @@
 import React from "react";
 
-function BlogPostCard({ post }) {
+function PostCard({ post }) {
   return (
     <div className="border border-black rounded-md">
       <img
@@ -22,4 +22,4 @@ function BlogPostCard({ post }) {
   );
 }
 
-export default BlogPostCard;
+export default PostCard;
