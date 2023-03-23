@@ -1,4 +1,4 @@
-export default posts = [
+export const posts = [
   {
     id: 1,
     title: "Test post",

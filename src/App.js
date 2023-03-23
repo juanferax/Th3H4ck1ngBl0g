@@ -1,9 +1,12 @@
 import BlogHomeView from "./views/BlogHomeView";
+import { PostsProvider } from "./context/postsReducer";
 
 function App() {
   return (
     <div className="App">
-      <BlogHomeView />
+      <PostsProvider>
+        <BlogHomeView />
+      </PostsProvider>
     </div>
   );
 }
