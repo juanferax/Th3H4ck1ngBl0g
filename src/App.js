@@ -1,9 +1,7 @@
 import BlogHomeView from "./views/BlogHomeView";
 import { AuthenticationProvider } from "./context/authenticationReducer";
 import { PostsProvider } from "./context/postsReducer";
-import React, { useState } from "react";
-
-export const LoginContext = React.createContext();
+import "./assets/style/main.css";
 
 function App() {
   return (

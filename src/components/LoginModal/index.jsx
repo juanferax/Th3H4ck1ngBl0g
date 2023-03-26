@@ -22,8 +22,8 @@ function LoginModal({ handleCloseLoginModal }) {
   };
 
   return (
-    <div className="border border-black rounded-md bg-white absolute right-4 top-3.5 p-3 drop-shadow-md">
-      <p className="text-lg font-semibold italic pb-2">Login</p>
+    <div className="absolute right-4 top-3.5 p-3 drop-shadow-md border border-black rounded-md bg-white">
+      <p className="text-lg font-semibold pb-2">Login</p>
       <FontAwesomeIcon
         className="absolute top-3 right-3 text-xl cursor-pointer"
         onClick={handleCloseLoginModal}
@@ -50,7 +50,8 @@ function LoginModal({ handleCloseLoginModal }) {
         />
         <div className="flex justify-center  pt-3">
           <button
-            className="border rounded-md p-0.5 w-20 bg-cyan-500"
+            className="border border-black rounded-lg p-0.5 w-20"
+            style={{ backgroundColor: "#4FBDBA" }}
             onClick={(e) => {
               handleLoginSubmit(e);
             }}

@@ -1,3 +1,5 @@
+import { faRotate, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { usePosts } from "../../context/postsReducer";
 
@@ -38,7 +40,7 @@ function EditPostModal() {
       <form>
         <p>Title:</p>
         <input
-          className="rounded-md w-1/2 mb-2"
+          className="rounded-md w-1/2 mb-2 border px-0.5"
           type="text"
           name="title"
           value={postInfo.title}
@@ -46,24 +48,24 @@ function EditPostModal() {
         />
         <p>Content:</p>
         <textarea
-          className="rounded-md w-full"
+          className="rounded-md w-full border px-0.5"
           name="content"
           rows="10"
           value={postInfo.content}
           onChange={(e) => handleInfoChange(e)}
         ></textarea>
         <button
-          className="border rounded-md p-1 text-white"
+          className="border rounded-md py-1 px-2 text-white"
           style={{ backgroundColor: "#072227" }}
           onClick={(e) => handleUpdate(e)}
         >
-          Update
+          Update <FontAwesomeIcon icon={faRotate} />
         </button>
         <button
-          className="border rounded-md p-1 text-white bg-red-600"
+          className="border rounded-md ml-1 py-1 px-2 text-white bg-red-600"
           onClick={(e) => handleDelete(e)}
         >
-          Delete
+          Delete <FontAwesomeIcon icon={faTrash} />
         </button>
       </form>
     </div>

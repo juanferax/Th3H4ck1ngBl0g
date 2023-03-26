@@ -28,7 +28,7 @@ function AddPostModal({ handleCloseAddModal }) {
       <form>
         <p>Title:</p>
         <input
-          className="rounded-md w-1/2 mb-2"
+          className="rounded-md w-1/2 mb-2 border px-0.5"
           type="text"
           name="title"
           value={postInfo.title}
@@ -36,14 +36,14 @@ function AddPostModal({ handleCloseAddModal }) {
         />
         <p>Content:</p>
         <textarea
-          className="rounded-md w-full"
+          className="rounded-md w-full border px-0.5"
           name="content"
           rows="10"
           value={postInfo.content}
           onChange={(e) => handleInfoChange(e)}
         ></textarea>
         <button
-          className="border rounded-md p-1 text-white"
+          className="border rounded-md py-1 px-2 text-white"
           style={{ backgroundColor: "#072227" }}
           onClick={(e) => handleSave(e)}
         >

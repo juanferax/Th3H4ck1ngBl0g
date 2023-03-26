@@ -1,7 +1,6 @@
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { usePosts } from "../../context/postsReducer";
-import React, { useContext } from "react";
 import { useAuthentication } from "../../context/authenticationReducer";
 
 function PostCard({ post }) {
@@ -9,14 +8,14 @@ function PostCard({ post }) {
 
   const {
     state: { loggedIn },
-    authDispatch,
   } = useAuthentication();
 
   return (
-    <div className="border border-black rounded-md relative">
+    <div className="border border-black rounded-md relative bg-gray-50">
       <img
         className="rounded-t-md"
         src="https://media.istockphoto.com/id/1270770086/photo/commercial-buildings-view-from-low-angle.jpg?s=612x612&w=0&k=20&c=auL9cSRdLJjujIhq7anW0wZi_j-1EzFpv6OhvSBMQQY="
+        alt="blog-img"
       />
       {loggedIn && (
         <div
