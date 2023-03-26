@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import PostCard from "../PostCard";
 import { usePosts } from "../../context/postsReducer";
 import AddPostModal from "../AddPostModal";
+import EditPostModal from "../EditPostModal";
+import { useAuthentication } from "../../context/authenticationReducer";
 
 function PostList() {
   // Color palette
@@ -16,8 +18,12 @@ function PostList() {
   // https://colorhunt.co/palette/2121213232320d737714ffec
 
   const {
-    state: { posts },
+    state: { posts, selectedPost },
   } = usePosts();
+
+  const {
+    state: { loggedIn },
+  } = useAuthentication();
 
   const [isAddModalOpened, setIsAddModalOpened] = useState(false);
 
@@ -38,26 +44,31 @@ function PostList() {
 
   return (
     <div className="px-52 pb-10">
-      {!isAddModalOpened ? (
-        <button
-          className="border rounded-md p-1 text-white"
-          style={{ backgroundColor: "#072227" }}
-          onClick={handleOpenAddModal}
-        >
-          Add new entry +
-        </button>
-      ) : (
-        <button
-          className="border rounded-md p-1 text-white"
-          style={{ backgroundColor: "#072227" }}
-          onClick={handleCloseAddModal}
-        >
-          Cancel X
-        </button>
+      {loggedIn && (
+        <>
+          {!isAddModalOpened ? (
+            <button
+              className="border rounded-md p-1 text-white"
+              style={{ backgroundColor: "#072227" }}
+              onClick={handleOpenAddModal}
+            >
+              Add new entry +
+            </button>
+          ) : (
+            <button
+              className="border rounded-md p-1 text-white"
+              style={{ backgroundColor: "#072227" }}
+              onClick={handleCloseAddModal}
+            >
+              Cancel X
+            </button>
+          )}
+        </>
       )}
       {isAddModalOpened && (
         <AddPostModal handleCloseAddModal={handleCloseAddModal} />
       )}
+      {selectedPost && <EditPostModal />}
       <p className="text-left text-xl py-3">Latest posts:</p>
       <div className="grid grid-cols-3 gap-4 w-full">
         {posts.map((post, idx) => {

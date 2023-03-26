@@ -23,7 +23,7 @@ function AddPostModal({ handleCloseAddModal }) {
 
   return (
     // <div className="fixed top-0 mt-16 pb-16 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center">
-    <div className="bg-slate-100 rounded-md p-3">
+    <div className="bg-slate-100 rounded-md p-3 mt-5">
       <p className="text-xl pb-5 font-semibold">Add new post</p>
       <form>
         <p>Title:</p>

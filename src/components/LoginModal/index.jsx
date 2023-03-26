@@ -1,28 +1,60 @@
-import React from "react";
+import { faCircleXmark } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useState } from "react";
+import { useAuthentication } from "../../context/authenticationReducer";
 
-function LoginModal() {
+function LoginModal({ handleCloseLoginModal }) {
+  const { dispatch } = useAuthentication();
+
+  const [credentials, setCredentials] = useState({
+    username: "",
+    password: "",
+  });
+
+  const handleInputChange = (event) => {
+    setCredentials({ ...credentials, [event.target.name]: event.target.value });
+  };
+
+  const handleLoginSubmit = (event) => {
+    event.preventDefault();
+    dispatch({ type: "login", payload: credentials });
+    handleCloseLoginModal();
+  };
+
   return (
-    <div className="border border-black rounded-md bg-white absolute right-4 top-3.5 p-3 shadow-2xl">
-      <h1 className="text-lg font-semibold italic pb-2">Login</h1>
+    <div className="border border-black rounded-md bg-white absolute right-4 top-3.5 p-3 drop-shadow-md">
+      <p className="text-lg font-semibold italic pb-2">Login</p>
+      <FontAwesomeIcon
+        className="absolute top-3 right-3 text-xl cursor-pointer"
+        onClick={handleCloseLoginModal}
+        icon={faCircleXmark}
+      />
       <form className="flex flex-col" action="">
         {/* <p>Username: </p> */}
         <input
           className="border-b pl-0.5 mb-3"
           type="text"
           name="username"
-          id="username"
           placeholder="username"
+          value={credentials.username}
+          onChange={handleInputChange}
         />
         {/* <p>Password: </p> */}
         <input
           className="border-b pl-0.5"
-          type="text"
+          type="password"
           name="password"
-          id="password"
           placeholder="password"
+          value={credentials.password}
+          onChange={handleInputChange}
         />
         <div className="flex justify-center  pt-3">
-          <button className="border rounded-md p-0.5 w-20 bg-cyan-500">
+          <button
+            className="border rounded-md p-0.5 w-20 bg-cyan-500"
+            onClick={(e) => {
+              handleLoginSubmit(e);
+            }}
+          >
             Login
           </button>
         </div>

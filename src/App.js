@@ -1,12 +1,18 @@
 import BlogHomeView from "./views/BlogHomeView";
+import { AuthenticationProvider } from "./context/authenticationReducer";
 import { PostsProvider } from "./context/postsReducer";
+import React, { useState } from "react";
+
+export const LoginContext = React.createContext();
 
 function App() {
   return (
     <div className="App">
-      <PostsProvider>
-        <BlogHomeView />
-      </PostsProvider>
+      <AuthenticationProvider>
+        <PostsProvider>
+          <BlogHomeView />
+        </PostsProvider>
+      </AuthenticationProvider>
     </div>
   );
 }

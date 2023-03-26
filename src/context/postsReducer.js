@@ -23,6 +23,7 @@ function PostsReducer(state, action) {
       );
       const newArr = [...state.posts];
       newArr.splice(postIndex, 1);
+      console.log(newArr);
       return { ...state, posts: newArr };
     }
     case "modify": {
