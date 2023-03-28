@@ -20,7 +20,7 @@ function Header() {
 
   return (
     <div
-      className="sticky top-0 w-full  h-16 flex items-center justify-between p-4 drop-shadow-md"
+      className="z-50 sticky top-0 w-full  h-16 flex items-center justify-between p-4 drop-shadow-md"
       style={{ backgroundColor: "#072227" }}
     >
       <p className="font-semibold text-white">
