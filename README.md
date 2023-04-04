@@ -1,5 +1,5 @@
 # Login credentials
-Username: juanferax
+Username: juanferax\
 Password: admin
 
 # Getting Started with Create React App
