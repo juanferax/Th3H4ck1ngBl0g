@@ -4,7 +4,7 @@ import PostList from "../components/PostList";
 
 function BlogHomeView() {
   return (
-    <div className="home" style={{ backgroundColor: "#35858B" }}>
+    <div className="home min-h-screen" style={{ backgroundColor: "#35858B" }}>
       <Header />
       <p
         className="py-5 text-center title"
