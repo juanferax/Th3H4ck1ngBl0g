@@ -9,16 +9,16 @@ const AuthenticationContext = React.createContext(); // Creamos el contexto que 
 function AuthenticationReducer(state, action) {
   switch (action.type) {
     case "login": {
-      if (
-        action.payload.username === "juanferax" &&
-        action.payload.password === "admin"
-      ) {
-        return { ...state, loggedIn: true };
-      }
-      return state;
+      return { ...state, loggedIn: true };
     }
     case "logout": {
       return { ...state, loggedIn: false };
+    }
+    case "openLoginModal": {
+      return { ...state, openLoginModal: true };
+    }
+    case "closeLoginModal": {
+      return { ...state, openLoginModal: false };
     }
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
@@ -34,6 +34,7 @@ function AuthenticationReducer(state, action) {
 function AuthenticationProvider({ children }) {
   const [state, dispatch] = React.useReducer(AuthenticationReducer, {
     loggedIn: false,
+    openLoginModal: false,
   });
   const value = { state, dispatch };
   return (

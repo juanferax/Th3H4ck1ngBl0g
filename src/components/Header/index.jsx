@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuthentication } from "../../context/authenticationReducer";
-import LoginModal from "../LoginModal";
+import { signOut } from "firebase/auth";
+import { firebaseAuth } from "../../config/firebase";
 
 function Header() {
   const {
@@ -8,14 +9,13 @@ function Header() {
     dispatch,
   } = useAuthentication();
 
-  const [openLoginModal, setOpenLoginModal] = useState(false);
-
   const handleOpenLoginModal = () => {
-    setOpenLoginModal(true);
+    dispatch({ type: "openLoginModal" });
   };
 
-  const handleCloseLoginModal = () => {
-    setOpenLoginModal(false);
+  const handleLogout = () => {
+    signOut(firebaseAuth);
+    dispatch({ type: "logout" });
   };
 
   return (
@@ -42,14 +42,11 @@ function Header() {
           <button
             className="border rounded-md py-1 px-2"
             style={{ backgroundColor: "#4FBDBA" }}
-            onClick={() => dispatch({ type: "logout" })}
+            onClick={handleLogout}
           >
             Logout
           </button>
         </div>
-      )}
-      {openLoginModal && (
-        <LoginModal handleCloseLoginModal={handleCloseLoginModal} />
       )}
     </div>
   );
