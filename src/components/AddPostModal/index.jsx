@@ -1,14 +1,25 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { usePosts } from "../../context/postsReducer";
+import { firebaseAuth, db, storage } from "../../config/firebase";
+import { addDoc, collection } from "firebase/firestore";
+import AuthenticationContext from "../../context/AuthenticationContext";
+
+export const ACCESS = {
+  PUBLIC: "public",
+  PRIVATE: "private",
+};
 
 function AddPostModal({ handleCloseAddModal }) {
+  const { user } = useContext(AuthenticationContext);
   const { dispatch } = usePosts();
+
+  const postsCollectionRef = collection(db, "posts");
 
   const [postInfo, setPostInfo] = useState({
     title: "",
-    author: "Juanferax",
-    publicationDate: "23/02/2023",
     content: "",
+    access: "",
+    imgUrl: "",
   });
 
   const handleInfoChange = (event) => {
@@ -19,6 +30,39 @@ function AddPostModal({ handleCloseAddModal }) {
     event.preventDefault();
     dispatch({ type: "newEntry", payload: postInfo });
     handleCloseAddModal();
+  };
+
+  const handleNewPost = async (event) => {
+    event.preventDefault();
+    const fechaActual = new Date();
+    const anio = fechaActual.getFullYear();
+    const mes = fechaActual.getMonth() + 1;
+    const dia = fechaActual.getDate();
+    try {
+      addDoc(postsCollectionRef, {
+        title: postInfo.title,
+        author: user.username,
+        publicationDate: `${dia}/${mes}/${anio}`,
+        content: postInfo.content,
+        access: postInfo.access,
+        imgUrl: postInfo.imgUrl,
+        author_uid: user.uid,
+      });
+      // await createUserWithEmailAndPassword(firebaseAuth, email, password).then(
+      //   (res) => {
+      //     addDoc(usersCollectionRef, { username: username, uid: res.user.uid });
+      //     setStatus(STATUS.SUCCESS);
+      //     setEmail("");
+      //     setPassword("");
+      //     setUsername("");
+      //   }
+      // );
+    } catch (error) {
+      console.error(error);
+      let err_message = error.message;
+      // setErrorMessage(err_message.slice(10));
+      // setStatus(STATUS.ERROR);
+    }
   };
 
   return (
@@ -45,7 +89,7 @@ function AddPostModal({ handleCloseAddModal }) {
         <button
           className="border rounded-md py-1 px-2 text-white"
           style={{ backgroundColor: "#072227" }}
-          onClick={(e) => handleSave(e)}
+          onClick={(e) => handleNewPost(e)}
         >
           Create
         </button>

@@ -1,14 +1,13 @@
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { usePosts } from "../../context/postsReducer";
-import { useAuthentication } from "../../context/authenticationReducer";
+import { useContext } from "react";
+import AuthenticationContext from "../../context/AuthenticationContext";
 
 function PostCard({ post }) {
   const { dispatch } = usePosts();
 
-  const {
-    state: { loggedIn },
-  } = useAuthentication();
+  const { loggedIn } = useContext(AuthenticationContext);
 
   return (
     <div className="border border-black rounded-md relative bg-gray-50">

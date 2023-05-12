@@ -1,21 +1,14 @@
-import React, { useState } from "react";
-import { useAuthentication } from "../../context/authenticationReducer";
+import React, { useContext, useEffect, useState } from "react";
 import { signOut } from "firebase/auth";
 import { firebaseAuth } from "../../config/firebase";
+import AuthenticationContext from "../../context/AuthenticationContext";
 
-function Header() {
-  const {
-    state: { loggedIn },
-    dispatch,
-  } = useAuthentication();
-
-  const handleOpenLoginModal = () => {
-    dispatch({ type: "openLoginModal" });
-  };
+function Header({ openLoginModal }) {
+  const { loggedIn, setLoggedIn } = useContext(AuthenticationContext);
 
   const handleLogout = () => {
     signOut(firebaseAuth);
-    dispatch({ type: "logout" });
+    setLoggedIn(false);
   };
 
   return (
@@ -30,15 +23,13 @@ function Header() {
         <button
           className="border rounded-md py-1 px-2"
           style={{ backgroundColor: "#4FBDBA" }}
-          onClick={handleOpenLoginModal}
+          onClick={openLoginModal}
         >
           Login
         </button>
       ) : (
         <div className="flex items-center">
-          <p className="pr-5 text-white">
-            Logged in as Juanferax - Role: Admin
-          </p>
+          <p className="pr-5 text-white">Logged in as Juanferax</p>
           <button
             className="border rounded-md py-1 px-2"
             style={{ backgroundColor: "#4FBDBA" }}

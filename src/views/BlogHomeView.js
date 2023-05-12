@@ -1,18 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../components/Header";
 import PostList from "../components/PostList";
-import { useAuthentication } from "../context/authenticationReducer";
 import LoginModal from "../components/LoginModal";
 
 function BlogHomeView() {
-  const {
-    state: { openLoginModal },
-  } = useAuthentication();
+  const [loginModal, setLoginModal] = useState(false);
+
+  const openLoginModal = () => {
+    setLoginModal(true);
+  };
+
+  const closeLoginModal = () => {
+    setLoginModal(false);
+  };
 
   return (
     <div className="home min-h-screen" style={{ backgroundColor: "#35858B" }}>
-      <Header />
-      {openLoginModal && <LoginModal />}
+      <Header openLoginModal={openLoginModal} />
+      {loginModal && <LoginModal closeLoginModal={closeLoginModal} />}
       <p
         className="py-5 text-center title"
         style={{ fontSize: 60, color: "#072227" }}

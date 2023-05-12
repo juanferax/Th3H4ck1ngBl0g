@@ -1,25 +1,88 @@
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState } from "react";
-import { useAuthentication } from "../../context/authenticationReducer";
-import { firebaseAuth } from "../../config/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import React, { useContext, useState } from "react";
+import { firebaseAuth, db } from "../../config/firebase";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import AuthenticationContext from "../../context/AuthenticationContext";
 
-function LoginModal() {
-  const { dispatch } = useAuthentication();
+export const ACTIONS = {
+  LOGIN: "login",
+  SIGNIN: "signin",
+};
+
+export const STATUS = {
+  SUCCESS: "success",
+  ERROR: "error",
+};
+
+function LoginModal({ closeLoginModal }) {
+  const { setLoggedIn, setUser } = useContext(AuthenticationContext);
+
+  const [action, setAction] = useState(ACTIONS.LOGIN);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [status, setStatus] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleLoginSubmit = async (event) => {
+  const usersCollectionRef = collection(db, "users");
+
+  const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      await signInWithEmailAndPassword(firebaseAuth, email, password);
-      dispatch({ type: "login" });
+      await signInWithEmailAndPassword(firebaseAuth, email, password).then(
+        (res) => {
+          const q = query(usersCollectionRef, where("uid", "==", res.user.uid));
+          getDocs(q).then((querySnapshot) => {
+            const formattedData = querySnapshot.docs.map((doc) => ({
+              ...doc.data(),
+            }));
+            setUser(formattedData[0]);
+          });
+        }
+      );
+      setLoggedIn(true);
+      closeLoginModal();
     } catch (error) {
-      console.error(error);
+      // console.error(error);
+      setErrorMessage("Error (auth/invalid-email-or-password)");
+      setStatus(STATUS.ERROR);
     }
-    dispatch({ type: "closeLoginModal" });
+  };
+
+  const handleSignIn = async (event) => {
+    event.preventDefault();
+    try {
+      await createUserWithEmailAndPassword(firebaseAuth, email, password).then(
+        (res) => {
+          addDoc(usersCollectionRef, {
+            username: username,
+            email: res.user.email,
+            uid: res.user.uid,
+          }).then(() => {
+            setUser({
+              username: username,
+              email: res.user.email,
+              uid: res.user.uid,
+            });
+          });
+          setStatus(STATUS.SUCCESS);
+          setEmail("");
+          setPassword("");
+          setUsername("");
+        }
+      );
+    } catch (error) {
+      // console.error(error);
+      let err_message = error.message;
+      setErrorMessage(err_message.slice(10));
+      setStatus(STATUS.ERROR);
+    }
   };
 
   return (
@@ -45,13 +108,27 @@ function LoginModal() {
         }}
         className="p-8 rounded-md bg-white flex flex-col items-center w-96"
       >
-        <p className="text-3xl pt-3 pb-10">Login</p>
+        {action === ACTIONS.LOGIN ? (
+          <p className="text-3xl pt-3 pb-10">Login</p>
+        ) : (
+          <p className="text-3xl pt-3 pb-10">Sign Up</p>
+        )}
         <FontAwesomeIcon
           className="absolute top-4 right-4 text-xl cursor-pointer"
-          onClick={() => dispatch({ type: "closeLoginModal" })}
+          onClick={closeLoginModal}
           icon={faXmark}
         />
         <form className="flex flex-col items-center w-full" action="">
+          {action === ACTIONS.SIGNIN && (
+            <input
+              className="border border-gray-300 p-1 pl-2.5 mb-4 w-full rounded-lg"
+              type="text"
+              name="username"
+              placeholder="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          )}
           <input
             className="border border-gray-300 p-1 pl-2.5 mb-4 w-full rounded-lg"
             type="email"
@@ -68,22 +145,84 @@ function LoginModal() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <div className="flex justify-center pt-4 w-full pb-10">
-            <button
-              className="rounded-3xl p-0.5 w-full"
-              style={{ backgroundColor: "#4FBDBA" }}
-              onClick={(e) => {
-                handleLoginSubmit(e);
-              }}
-            >
-              <p className="text-white py-1 font-semibold">Login</p>
-            </button>
-          </div>
-          <hr className="w-full mb-5 bg-gray-300" />
-          <p className="pb-5">
-            Don't have an acount yet?{" "}
-            <u className="text-blue-600 cursor-pointer">Sign Up</u>
-          </p>
+          {action === ACTIONS.LOGIN ? (
+            <>
+              <div className="flex justify-center py-4 w-full">
+                <button
+                  className="rounded-3xl p-0.5 w-full"
+                  style={{ backgroundColor: "#4FBDBA" }}
+                  onClick={(e) => {
+                    handleLogin(e);
+                  }}
+                >
+                  <p className="text-white py-1 font-semibold">Login</p>
+                </button>
+              </div>
+              <div className="pb-6 text-center">
+                {status === STATUS.SUCCESS ? (
+                  <p className="text-green-600">Login successful</p>
+                ) : (
+                  <p className="text-red-600">{errorMessage}</p>
+                )}
+              </div>
+              <hr className="w-full mb-5 bg-gray-300" />
+              <p className="pb-5">
+                Don't have an acount yet?{" "}
+                <u
+                  className="text-blue-600 cursor-pointer"
+                  onClick={() => {
+                    setErrorMessage("");
+                    setStatus("");
+                    setEmail("");
+                    setPassword("");
+                    setAction(ACTIONS.SIGNIN);
+                  }}
+                >
+                  Sign Up
+                </u>
+              </p>
+            </>
+          ) : (
+            <>
+              <div className="flex justify-center py-4 w-full">
+                <button
+                  className="rounded-3xl p-0.5 w-full"
+                  style={{ backgroundColor: "#4FBDBA" }}
+                  onClick={(e) => {
+                    handleSignIn(e);
+                  }}
+                >
+                  <p className="text-white py-1 font-semibold">Register</p>
+                </button>
+              </div>
+              <div className="pb-6 text-center">
+                {status === STATUS.SUCCESS ? (
+                  <p className="text-green-600">
+                    Register successful, you are now logged in
+                  </p>
+                ) : (
+                  <p className="text-red-600">{errorMessage}</p>
+                )}
+              </div>
+              <hr className="w-full mb-5 bg-gray-300" />
+              <p className="pb-5">
+                Already have an acount?{" "}
+                <u
+                  className="text-blue-600 cursor-pointer"
+                  onClick={() => {
+                    setErrorMessage("");
+                    setStatus("");
+                    setEmail("");
+                    setPassword("");
+                    setUsername("");
+                    setAction(ACTIONS.LOGIN);
+                  }}
+                >
+                  Login
+                </u>
+              </p>
+            </>
+          )}
         </form>
       </div>
     </div>

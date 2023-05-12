@@ -1,20 +1,18 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import PostCard from "../PostCard";
 import { usePosts } from "../../context/postsReducer";
 import AddPostModal from "../AddPostModal";
 import EditPostModal from "../EditPostModal";
-import { useAuthentication } from "../../context/authenticationReducer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import AuthenticationContext from "../../context/AuthenticationContext";
 
 function PostList() {
   const {
     state: { posts, selectedPost },
   } = usePosts();
 
-  const {
-    state: { loggedIn },
-  } = useAuthentication();
+  const { loggedIn } = useContext(AuthenticationContext);
 
   const [isAddModalOpened, setIsAddModalOpened] = useState(false);
 
@@ -53,7 +51,9 @@ function PostList() {
         <AddPostModal handleCloseAddModal={handleCloseAddModal} />
       )}
       {selectedPost && <EditPostModal />}
-      <p className="text-left text-xl pt-5 pb-3 font-semibold">Latest posts:</p>
+      <p className="text-left text-xl pt-5 pb-3 font-semibold">
+        {loggedIn ? "My posts:" : "Latest posts:"}
+      </p>
       <div className="grid grid-cols-3 gap-4 w-full">
         {posts.map((post, idx) => {
           return <PostCard key={idx} post={post} />;
