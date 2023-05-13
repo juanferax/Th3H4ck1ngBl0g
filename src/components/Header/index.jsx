@@ -2,9 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import { signOut } from "firebase/auth";
 import { firebaseAuth } from "../../config/firebase";
 import AuthenticationContext from "../../context/AuthenticationContext";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function Header({ openLoginModal }) {
-  const { loggedIn, setLoggedIn } = useContext(AuthenticationContext);
+  const { loggedIn, setLoggedIn, user } = useContext(AuthenticationContext);
 
   const handleLogout = () => {
     signOut(firebaseAuth);
@@ -21,7 +23,7 @@ function Header({ openLoginModal }) {
       </p>
       {!loggedIn ? (
         <button
-          className="border rounded-md py-1 px-2"
+          className="rounded-md py-1 px-2"
           style={{ backgroundColor: "#4FBDBA" }}
           onClick={openLoginModal}
         >
@@ -29,9 +31,14 @@ function Header({ openLoginModal }) {
         </button>
       ) : (
         <div className="flex items-center">
-          <p className="pr-5 text-white">Logged in as Juanferax</p>
+          {user && (
+            <>
+              <FontAwesomeIcon className="text-white pr-3" icon={faUser} />
+              <p className="pr-5 text-white">{user.username}</p>
+            </>
+          )}
           <button
-            className="border rounded-md py-1 px-2"
+            className="rounded-md py-1 px-2"
             style={{ backgroundColor: "#4FBDBA" }}
             onClick={handleLogout}
           >

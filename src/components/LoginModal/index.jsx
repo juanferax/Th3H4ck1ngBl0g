@@ -46,7 +46,6 @@ function LoginModal({ closeLoginModal }) {
           });
         }
       );
-      setLoggedIn(true);
       closeLoginModal();
     } catch (error) {
       // console.error(error);
@@ -77,6 +76,7 @@ function LoginModal({ closeLoginModal }) {
           setUsername("");
         }
       );
+      closeLoginModal();
     } catch (error) {
       // console.error(error);
       let err_message = error.message;

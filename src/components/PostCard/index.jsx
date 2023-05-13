@@ -1,13 +1,52 @@
-import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { usePosts } from "../../context/postsReducer";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import AuthenticationContext from "../../context/AuthenticationContext";
+import {
+  faThumbsUp,
+  faThumbsDown,
+  faSquareCaretDown,
+} from "@fortawesome/free-regular-svg-icons";
+import {
+  faBars,
+  faEllipsisVertical,
+  faPenToSquare,
+  faTrash,
+  faSquareCaretDown as faSquareCaretDownFill,
+  faCaretDown,
+  faCaretUp,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  faThumbsUp as faThumbsUpFill,
+  faThumbsDown as faThumbsDownFill,
+} from "@fortawesome/free-solid-svg-icons";
+import { Popover, Popper } from "@mui/material";
 
 function PostCard({ post }) {
   const { dispatch } = usePosts();
 
   const { loggedIn } = useContext(AuthenticationContext);
+
+  const [like, setLike] = useState(false);
+  const [dislike, setDislike] = useState(false);
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleActionsPopover = (event) => {
+    setAnchorEl(anchorEl ? null : event.currentTarget);
+  };
+
+  const open = Boolean(anchorEl);
+
+  const likePost = () => {
+    setLike((prev) => !prev);
+    setDislike(false);
+  };
+
+  const dislikePost = () => {
+    setDislike((prev) => !prev);
+    setLike(false);
+  };
 
   return (
     <div className="border border-black rounded-md relative bg-gray-50">
@@ -17,12 +56,52 @@ function PostCard({ post }) {
         alt="blog-img"
       />
       {loggedIn && (
-        <div
-          className="bg-white absolute top-0 right-0 p-2 m-2 rounded-md cursor-pointer aspect-square flex"
-          onClick={() => dispatch({ type: "selectPost", payload: post })}
-        >
-          <FontAwesomeIcon icon={faPenToSquare} />
-        </div>
+        <>
+          <div
+            className="bg-white absolute top-0 right-0 p-2 m-2 rounded-md cursor-pointer aspect-square flex"
+            // onClick={() => dispatch({ type: "selectPost", payload: post })}
+            onClick={handleActionsPopover}
+          >
+            <FontAwesomeIcon
+              className="aspect-square text-xl"
+              icon={open ? faCaretUp : faCaretDown}
+            />
+          </div>
+          <Popover
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleActionsPopover}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+          >
+            <ul className="cursor-pointer">
+              <li
+                className="flex flex-row justify-end items-center pl-2 pr-2 p-1 hover:bg-gray-100 hover:text-cyan-600"
+                onClick={() => {
+                  handleActionsPopover();
+                  dispatch({ type: "selectPost", payload: post });
+                }}
+              >
+                <p className="text-lg">Edit</p>&nbsp;&nbsp;
+                <FontAwesomeIcon className="text-xl" icon={faPenToSquare} />
+              </li>
+              <li className="flex flex-row justify-end items-center pl-2 pr-2 p-1 hover:bg-gray-100 hover:text-red-600">
+                <p className="text-lg">Delete</p>&nbsp;&nbsp;
+                <FontAwesomeIcon
+                  className="text-xl"
+                  style={{ width: 20 }}
+                  icon={faTrash}
+                />
+              </li>
+            </ul>
+          </Popover>
+        </>
       )}
       <div className="p-2">
         <p className="font-semibold text-xl"> {post.title} </p>
@@ -36,6 +115,25 @@ function PostCard({ post }) {
           →
         </p>
       </div>
+      {loggedIn && (
+        <>
+          <div className="absolute bottom-0 right-8 p-2 m-2 rounded-md cursor-pointer aspect-square flex">
+            <FontAwesomeIcon
+              className="text-2xl"
+              icon={like ? faThumbsUpFill : faThumbsUp}
+              onClick={likePost}
+            />
+          </div>
+          <div className="absolute bottom-0 right-0 p-2 m-2 rounded-md cursor-pointer aspect-square flex">
+            <FontAwesomeIcon
+              className="text-2xl"
+              icon={dislike ? faThumbsDownFill : faThumbsDown}
+              onClick={dislikePost}
+              flip="horizontal"
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }

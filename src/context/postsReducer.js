@@ -1,5 +1,7 @@
 import * as React from "react";
 import { posts } from "../assets/posts";
+import { db } from "../config/firebase";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
 const PostsContext = React.createContext(); // Creamos el contexto que usaremos para pasar el estado.
 

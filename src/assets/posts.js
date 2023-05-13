@@ -3,6 +3,7 @@ export const posts = [
     id: 1,
     title: "Test post 1",
     author: "Juanferax",
+    public: true,
     publicationDate: "12/03/2023",
   },
   {
