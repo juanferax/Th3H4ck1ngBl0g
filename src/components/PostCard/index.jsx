@@ -15,12 +15,15 @@ import {
   faSquareCaretDown as faSquareCaretDownFill,
   faCaretDown,
   faCaretUp,
+  faHourglassHalf,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faThumbsUp as faThumbsUpFill,
   faThumbsDown as faThumbsDownFill,
 } from "@fortawesome/free-solid-svg-icons";
 import { Popover, Popper } from "@mui/material";
+import { deleteDoc, doc } from "firebase/firestore";
+import { db } from "../../config/firebase";
 
 function PostCard({ post }) {
   const { dispatch } = usePosts();
@@ -38,14 +41,19 @@ function PostCard({ post }) {
 
   const open = Boolean(anchorEl);
 
-  const likePost = () => {
-    setLike((prev) => !prev);
-    setDislike(false);
-  };
+  // const likePost = () => {
+  //   setLike((prev) => !prev);
+  //   setDislike(false);
+  // };
 
-  const dislikePost = () => {
-    setDislike((prev) => !prev);
-    setLike(false);
+  // const dislikePost = () => {
+  //   setDislike((prev) => !prev);
+  //   setLike(false);
+  // };
+
+  const handleDelete = async () => {
+    const postDoc = doc(db, "posts", post.id);
+    await deleteDoc(postDoc);
   };
 
   return (
@@ -91,7 +99,10 @@ function PostCard({ post }) {
                 <p className="text-lg">Edit</p>&nbsp;&nbsp;
                 <FontAwesomeIcon className="text-xl" icon={faPenToSquare} />
               </li>
-              <li className="flex flex-row justify-end items-center pl-2 pr-2 p-1 hover:bg-gray-100 hover:text-red-600">
+              <li
+                className="flex flex-row justify-end items-center pl-2 pr-2 p-1 hover:bg-gray-100 hover:text-red-600"
+                onClick={handleDelete}
+              >
                 <p className="text-lg">Delete</p>&nbsp;&nbsp;
                 <FontAwesomeIcon
                   className="text-xl"
@@ -115,7 +126,11 @@ function PostCard({ post }) {
           →
         </p>
       </div>
-      {loggedIn && (
+      <div className="absolute bottom-0 right-0 p-2 flex items-center text-gray-600">
+        <FontAwesomeIcon className="text-xs" icon={faHourglassHalf} />
+        &nbsp;<p className="italic">{post.readingTime} mins</p>
+      </div>
+      {/* {loggedIn && (
         <>
           <div className="absolute bottom-0 right-8 p-2 m-2 rounded-md cursor-pointer aspect-square flex">
             <FontAwesomeIcon
@@ -133,7 +148,7 @@ function PostCard({ post }) {
             />
           </div>
         </>
-      )}
+      )} */}
     </div>
   );
 }

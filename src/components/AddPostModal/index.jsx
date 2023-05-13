@@ -3,7 +3,7 @@ import { usePosts } from "../../context/postsReducer";
 import { firebaseAuth, db, storage } from "../../config/firebase";
 import { addDoc, collection } from "firebase/firestore";
 import AuthenticationContext from "../../context/AuthenticationContext";
-import { Switch } from "@mui/material";
+import { Switch, TextField, TextareaAutosize } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,6 +15,7 @@ function AddPostModal({ handleCloseAddModal }) {
   const postsCollectionRef = collection(db, "posts");
 
   const [checked, setChecked] = useState(false);
+  const [missingData, setMissingData] = useState(false);
 
   const [postInfo, setPostInfo] = useState({
     title: "",
@@ -40,18 +41,25 @@ function AddPostModal({ handleCloseAddModal }) {
 
   const handleNewPost = async (event) => {
     event.preventDefault();
+    if (!postInfo.title || !postInfo.content) {
+      setMissingData(true);
+      return;
+    }
+
     const fechaActual = new Date();
     const anio = fechaActual.getFullYear();
     const mes = fechaActual.getMonth() + 1;
     const dia = fechaActual.getDate();
+    // Calcula la cantidad de palabras en el contenido
+    const wordCount = postInfo.content.split(/\s+/g).length;
+    // Calcula la duración estimada de la lectura en minutos
+    const readingTime = Math.ceil(wordCount / 200);
     try {
       addDoc(postsCollectionRef, {
-        title: postInfo.title,
+        ...postInfo,
         author: user.username,
         publicationDate: `${dia}/${mes}/${anio}`,
-        content: postInfo.content,
-        access: postInfo.access,
-        imgUrl: postInfo.imgUrl,
+        readingTime: readingTime,
         author_uid: user.uid,
       });
       handleCloseAddModal();
@@ -130,7 +138,7 @@ function AddPostModal({ handleCloseAddModal }) {
       <p className="text-xl pb-5 font-semibold">Add new post</p>
       <form>
         <p className="text-lg font-medium">Access:</p>
-        <div className="mb-2 pt-1 flex items-center">
+        <div className="mb-3 pt-1 flex items-center">
           <AccessSwitch
             name="public"
             onChange={(e) => switchHandler(e)}
@@ -140,29 +148,65 @@ function AddPostModal({ handleCloseAddModal }) {
           <p className="italic">{postInfo.public ? "PUBLIC" : "PRIVATE"}</p>
         </div>
         <p className="text-lg font-medium">Title:</p>
-        <input
-          className="rounded-md w-1/2 mb-2 border p-0.5 pl-1.5"
-          type="text"
-          name="title"
-          value={postInfo.title}
-          onChange={(e) => handleInfoChange(e)}
-        />
+        <div className="mb-3">
+          <TextField
+            error={missingData && !postInfo.title}
+            helperText={
+              missingData && !postInfo.title ? "This field cannot be empty" : ""
+            }
+            className="w-1/2"
+            name="title"
+            value={postInfo.title}
+            onChange={(e) => handleInfoChange(e)}
+            size="small"
+            inputProps={{
+              style: {
+                height: "15px",
+                backgroundColor: "#fff",
+              },
+            }}
+          />
+        </div>
         <p className="text-lg font-medium">Image URL:</p>
-        <input
-          className="rounded-md w-full mb-2 border p-0.5 pl-1.5"
-          type="text"
-          name="imgUrl"
-          value={postInfo.imgUrl}
-          onChange={(e) => handleInfoChange(e)}
-        />
+        <div className="mb-3">
+          <TextField
+            className="w-full"
+            name="imgUrl"
+            value={postInfo.imgUrl}
+            onChange={(e) => handleInfoChange(e)}
+            size="small"
+            inputProps={{
+              style: {
+                height: "15px",
+                backgroundColor: "#fff",
+              },
+            }}
+          />
+        </div>
         <p className="text-lg font-medium">Content:</p>
-        <textarea
-          className="rounded-md w-full mb-2 border p-0.5 pl-1.5"
-          name="content"
-          rows="8"
-          value={postInfo.content}
-          onChange={(e) => handleInfoChange(e)}
-        ></textarea>
+        <div
+          className="mb-3 bg-white"
+          style={{
+            height: 201,
+            marginBottom: missingData && !postInfo.content ? 35 : "1rem",
+          }}
+        >
+          <TextField
+            error={missingData && !postInfo.content}
+            helperText={
+              missingData && !postInfo.content
+                ? "This field cannot be empty"
+                : ""
+            }
+            multiline={true}
+            rows={8}
+            className="w-full"
+            name="content"
+            value={postInfo.content}
+            onChange={(e) => handleInfoChange(e)}
+            size="small"
+          />
+        </div>
         <button
           className="border rounded-md py-1 px-2 text-white"
           style={{ backgroundColor: "#072227" }}

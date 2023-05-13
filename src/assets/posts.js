@@ -5,6 +5,8 @@ export const posts = [
     author: "Juanferax",
     public: true,
     publicationDate: "12/03/2023",
+    readingTime: 5,
+    content: "",
   },
   {
     id: 2,

@@ -7,7 +7,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { usePosts } from "../../context/postsReducer";
-import { Switch } from "@mui/material";
+import { Switch, TextField } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 function EditPostModal() {
@@ -18,6 +18,7 @@ function EditPostModal() {
 
   const [postInfo, setPostInfo] = useState(selectedPost);
   const [checked, setChecked] = useState(postInfo.public);
+  const [missingData, setMissingData] = useState(false);
 
   useEffect(() => {
     setPostInfo(selectedPost);
@@ -31,6 +32,12 @@ function EditPostModal() {
   // y puede hacer lo mismo que en la función close
   const handleUpdate = (event) => {
     event.preventDefault();
+    if (!postInfo.title || !postInfo.content) {
+      console.log("missig data");
+      setMissingData(true);
+      return;
+    }
+
     dispatch({ type: "modify", payload: postInfo });
     dispatch({ type: "selectPost", payload: null });
   };
@@ -116,7 +123,7 @@ function EditPostModal() {
         <p className="text-xl pb-5 font-semibold">Edit post</p>
         <form>
           <p className="text-lg font-medium">Access:</p>
-          <div className="mb-2 pt-1 flex items-center">
+          <div className="mb-3 pt-1 flex items-center">
             <AccessSwitch
               name="public"
               onChange={(e) => switchHandler(e)}
@@ -126,29 +133,67 @@ function EditPostModal() {
             <p className="italic">{postInfo.public ? "PUBLIC" : "PRIVATE"}</p>
           </div>
           <p className="text-lg font-medium">Title:</p>
-          <input
-            className="rounded-md w-1/2 mb-2 border p-0.5 pl-1.5"
-            type="text"
-            name="title"
-            value={postInfo.title}
-            onChange={(e) => handleInfoChange(e)}
-          />
+          <div className="mb-3">
+            <TextField
+              error={missingData && !postInfo.title}
+              helperText={
+                missingData && !postInfo.title
+                  ? "This field cannot be empty"
+                  : ""
+              }
+              className="w-1/2"
+              name="title"
+              value={postInfo.title}
+              onChange={(e) => handleInfoChange(e)}
+              size="small"
+              inputProps={{
+                style: {
+                  height: "15px",
+                  backgroundColor: "#fff",
+                },
+              }}
+            />
+          </div>
           <p className="text-lg font-medium">Image URL:</p>
-          <input
-            className="rounded-md w-full mb-2 border p-0.5 pl-1.5"
-            type="text"
-            name="imgUrl"
-            value={postInfo.imgUrl}
-            onChange={(e) => handleInfoChange(e)}
-          />
+          <div className="mb-3">
+            <TextField
+              className="w-full"
+              name="imgUrl"
+              value={postInfo.imgUrl}
+              onChange={(e) => handleInfoChange(e)}
+              size="small"
+              inputProps={{
+                style: {
+                  height: "15px",
+                  backgroundColor: "#fff",
+                },
+              }}
+            />
+          </div>
           <p className="text-lg font-medium">Content:</p>
-          <textarea
-            className="rounded-md w-full mb-2 border p-0.5 pl-1.5"
-            name="content"
-            rows="8"
-            value={postInfo.content}
-            onChange={(e) => handleInfoChange(e)}
-          ></textarea>
+          <div
+            className="mb-3 bg-white"
+            style={{
+              height: 201,
+              marginBottom: missingData && !postInfo.content ? 35 : "1rem",
+            }}
+          >
+            <TextField
+              error={missingData && !postInfo.content}
+              helperText={
+                missingData && !postInfo.content
+                  ? "This field cannot be empty"
+                  : ""
+              }
+              multiline={true}
+              rows={8}
+              className="w-full"
+              name="content"
+              value={postInfo.content}
+              onChange={(e) => handleInfoChange(e)}
+              size="small"
+            />
+          </div>
           <button
             className="border rounded-md py-1 px-2 text-white"
             style={{ backgroundColor: "#072227" }}
