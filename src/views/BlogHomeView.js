@@ -19,7 +19,7 @@ function BlogHomeView() {
       <Header openLoginModal={openLoginModal} />
       {loginModal && <LoginModal closeLoginModal={closeLoginModal} />}
       <p
-        className="py-5 text-center title"
+        className="py-5 text-center font-tech"
         style={{ fontSize: 60, color: "#072227" }}
       >
         Th3 H4ck1ng Bl0g

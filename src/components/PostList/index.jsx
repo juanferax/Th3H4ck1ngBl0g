@@ -11,7 +11,7 @@ import { db } from "../../config/firebase";
 
 function PostList() {
   const {
-    state: { selectedPost, posts },
+    state: { selectedPost },
     dispatch,
   } = usePosts();
 
@@ -19,7 +19,7 @@ function PostList() {
 
   const postsCollectionRef = collection(db, "posts");
 
-  // const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
   const [isAddModalOpened, setIsAddModalOpened] = useState(false);
 
   const handleOpenAddModal = () => {
@@ -36,8 +36,9 @@ function PostList() {
       getDocs(q).then((querySnapshot) => {
         const formattedData = querySnapshot.docs.map((doc) => ({
           ...doc.data(),
+          id: doc.id,
         }));
-        // setPosts(formattedData);
+        setPosts(formattedData);
       });
     } catch (err) {
       console.error(err);
@@ -50,8 +51,9 @@ function PostList() {
       getDocs(q).then((querySnapshot) => {
         const formattedData = querySnapshot.docs.map((doc) => ({
           ...doc.data(),
+          id: doc.id,
         }));
-        // setPosts(formattedData);
+        setPosts(formattedData);
       });
     } catch (err) {
       console.error(err);
@@ -59,10 +61,16 @@ function PostList() {
   };
 
   useEffect(() => {
-    if (user) {
-      // getMyPosts();
+    if (user && loggedIn) {
+      getMyPosts();
     }
   });
+
+  useEffect(() => {
+    if (!user && !loggedIn) {
+      getPublicPosts();
+    }
+  }, [loggedIn]);
 
   // Close AddPostModal when a post is selected for edition
   useEffect(() => {
@@ -70,7 +78,7 @@ function PostList() {
   }, [selectedPost]);
 
   return (
-    <div className="px-52 pb-10">
+    <div className="lg:px-48 px-5 pb-10">
       {loggedIn && (
         <>
           {!selectedPost && (
@@ -101,10 +109,10 @@ function PostList() {
         <AddPostModal handleCloseAddModal={handleCloseAddModal} />
       )}
       {selectedPost && <EditPostModal />}
-      <p className="text-left text-xl pt-5 pb-3 font-semibold">
+      <p className="text-left text-2xl pt-8 pb-4 font-tech">
         {loggedIn ? "My posts:" : "Latest posts:"}
       </p>
-      <div className="grid grid-cols-3 gap-4 w-full">
+      <div className="grid lg:grid-cols-3 gap-4 w-full sm:grid-cols-1">
         {posts &&
           posts.map((post, idx) => {
             return <PostCard key={idx} post={post} />;

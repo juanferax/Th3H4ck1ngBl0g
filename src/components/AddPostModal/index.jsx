@@ -36,6 +36,7 @@ function AddPostModal({ handleCloseAddModal }) {
 
   const switchHandler = (event) => {
     setChecked(event.target.checked);
+    console.log(event.target.value);
     setPostInfo({ ...postInfo, [event.target.name]: event.target.checked });
   };
 

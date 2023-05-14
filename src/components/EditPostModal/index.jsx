@@ -1,14 +1,11 @@
-import {
-  faFileCircleCheck,
-  faRotate,
-  faTrash,
-  faXmark,
-} from "@fortawesome/free-solid-svg-icons";
+import { faFileCircleCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { usePosts } from "../../context/postsReducer";
 import { Switch, TextField } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { db } from "../../config/firebase";
+import { doc, updateDoc } from "firebase/firestore";
 
 function EditPostModal() {
   const {
@@ -22,6 +19,7 @@ function EditPostModal() {
 
   useEffect(() => {
     setPostInfo(selectedPost);
+    console.log(selectedPost);
   }, [selectedPost]);
 
   const handleInfoChange = (event) => {
@@ -30,7 +28,7 @@ function EditPostModal() {
 
   // !!Preguntar por qué él pasa una función handleCloseModal cuando en el Edit component tiene el dispatch
   // y puede hacer lo mismo que en la función close
-  const handleUpdate = (event) => {
+  const handleUpdate = async (event) => {
     event.preventDefault();
     if (!postInfo.title || !postInfo.content) {
       console.log("missig data");
@@ -38,8 +36,17 @@ function EditPostModal() {
       return;
     }
 
-    dispatch({ type: "modify", payload: postInfo });
-    dispatch({ type: "selectPost", payload: null });
+    // Calcula la cantidad de palabras en el contenido
+    const wordCount = postInfo.content.split(/\s+/g).length;
+    // Calcula la duración estimada de la lectura en minutos
+    const readingTime = Math.ceil(wordCount / 200);
+    try {
+      const postDoc = doc(db, "posts", postInfo.id);
+      await updateDoc(postDoc, { ...postInfo, readingTime: readingTime });
+      dispatch({ type: "selectPost", payload: null });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const switchHandler = (event) => {

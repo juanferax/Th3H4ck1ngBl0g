@@ -2,26 +2,22 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { usePosts } from "../../context/postsReducer";
 import { useContext, useState } from "react";
 import AuthenticationContext from "../../context/AuthenticationContext";
+// import {
+//   faThumbsUp,
+//   faThumbsDown,
+// } from "@fortawesome/free-regular-svg-icons";
+// import {
+//   faThumbsUp as faThumbsUpFill,
+//   faThumbsDown as faThumbsDownFill,
+// } from "@fortawesome/free-solid-svg-icons";
 import {
-  faThumbsUp,
-  faThumbsDown,
-  faSquareCaretDown,
-} from "@fortawesome/free-regular-svg-icons";
-import {
-  faBars,
-  faEllipsisVertical,
   faPenToSquare,
   faTrash,
-  faSquareCaretDown as faSquareCaretDownFill,
   faCaretDown,
   faCaretUp,
   faHourglassHalf,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  faThumbsUp as faThumbsUpFill,
-  faThumbsDown as faThumbsDownFill,
-} from "@fortawesome/free-solid-svg-icons";
-import { Popover, Popper } from "@mui/material";
+import { Popover } from "@mui/material";
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../config/firebase";
 
@@ -30,8 +26,8 @@ function PostCard({ post }) {
 
   const { loggedIn } = useContext(AuthenticationContext);
 
-  const [like, setLike] = useState(false);
-  const [dislike, setDislike] = useState(false);
+  // const [like, setLike] = useState(false);
+  // const [dislike, setDislike] = useState(false);
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -52,21 +48,41 @@ function PostCard({ post }) {
   // };
 
   const handleDelete = async () => {
-    const postDoc = doc(db, "posts", post.id);
-    await deleteDoc(postDoc);
+    try {
+      const postDoc = doc(db, "posts", post.id);
+      await deleteDoc(postDoc);
+      handleActionsPopover();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const shortContent = (content, count) => {
+    if (content.length > count) {
+      content = content.substring(0, count) + "...";
+    }
+    return content;
   };
 
   return (
-    <div className="border border-black rounded-md relative bg-gray-50">
+    <div
+      className="border border-black rounded-md relative bg-gray-50"
+      // style={{ width: 491 }}
+    >
       <img
         className="rounded-t-md"
-        src="https://media.istockphoto.com/id/1270770086/photo/commercial-buildings-view-from-low-angle.jpg?s=612x612&w=0&k=20&c=auL9cSRdLJjujIhq7anW0wZi_j-1EzFpv6OhvSBMQQY="
+        src={
+          post.imgUrl
+            ? post.imgUrl
+            : "https://media.istockphoto.com/id/1270770086/photo/commercial-buildings-view-from-low-angle.jpg?s=612x612&w=0&k=20&c=auL9cSRdLJjujIhq7anW0wZi_j-1EzFpv6OhvSBMQQY="
+        }
+        style={{ height: 250, width: "100%" }}
         alt="blog-img"
       />
       {loggedIn && (
         <>
           <div
-            className="bg-white absolute top-0 right-0 p-2 m-2 rounded-md cursor-pointer aspect-square flex"
+            className="bg-white absolute top-0 right-0 p-2 m-2 rounded-md cursor-pointer aspect-square flex border border-gray-400"
             // onClick={() => dispatch({ type: "selectPost", payload: post })}
             onClick={handleActionsPopover}
           >
@@ -116,16 +132,19 @@ function PostCard({ post }) {
       )}
       <div className="p-2">
         <p className="font-semibold text-xl"> {post.title} </p>
+        <p className="text-gray-600">{!loggedIn && "Author: " + post.author}</p>
         <p className="text-gray-600"> {post.publicationDate} </p>
-        <div className="bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 h-2 w-5/6 my-1"></div>
-        <div className="bg-gradient-to-r from-slate-100 via-slate-200 to-slate-100 h-2 w-3/5"></div>
-        <p>
-          <a href={"#/" + post.id} className="underline text-left w-full">
-            Read more
-          </a>{" "}
-          →
-        </p>
+        {/* skeleton */}
+        {/* <div className="bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 h-2 w-5/6 my-1"></div>
+        <div className="bg-gradient-to-r from-slate-100 via-slate-200 to-slate-100 h-2 w-3/5"></div> */}
+        <p className="pt-2 h-14"> {shortContent(post.content, 90)} </p>
       </div>
+      <p className="p-2">
+        <a href={"#/" + post.id} className="underline text-left w-full">
+          Read more
+        </a>{" "}
+        →
+      </p>
       <div className="absolute bottom-0 right-0 p-2 flex items-center text-gray-600">
         <FontAwesomeIcon className="text-xs" icon={faHourglassHalf} />
         &nbsp;<p className="italic">{post.readingTime} mins</p>
