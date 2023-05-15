@@ -11,7 +11,7 @@ import AuthenticationContext from "../../context/AuthenticationContext";
 
 export const ACTIONS = {
   LOGIN: "login",
-  SIGNIN: "signin",
+  SIGNUP: "signup",
 };
 
 export const STATUS = {
@@ -19,7 +19,7 @@ export const STATUS = {
   ERROR: "error",
 };
 
-function LoginModal({ closeLoginModal }) {
+function LoginSignupModal({ closeLoginModal }) {
   const { setLoggedIn, setUser } = useContext(AuthenticationContext);
 
   const [action, setAction] = useState(ACTIONS.LOGIN);
@@ -42,7 +42,7 @@ function LoginModal({ closeLoginModal }) {
             const formattedData = querySnapshot.docs.map((doc) => ({
               ...doc.data(),
             }));
-            setUser(formattedData[0]);
+            setUser(formattedData[0]); // Is this necessary?
           });
         }
       );
@@ -119,7 +119,7 @@ function LoginModal({ closeLoginModal }) {
           icon={faXmark}
         />
         <form className="flex flex-col items-center w-full" action="">
-          {action === ACTIONS.SIGNIN && (
+          {action === ACTIONS.SIGNUP && (
             <input
               className="border border-gray-300 p-1 pl-2.5 mb-4 w-full rounded-lg"
               type="text"
@@ -175,7 +175,7 @@ function LoginModal({ closeLoginModal }) {
                     setStatus("");
                     setEmail("");
                     setPassword("");
-                    setAction(ACTIONS.SIGNIN);
+                    setAction(ACTIONS.SIGNUP);
                   }}
                 >
                   Sign Up
@@ -229,4 +229,4 @@ function LoginModal({ closeLoginModal }) {
   );
 }
 
-export default LoginModal;
+export default LoginSignupModal;

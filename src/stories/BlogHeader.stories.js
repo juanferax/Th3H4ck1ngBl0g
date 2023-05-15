@@ -10,7 +10,6 @@ export const LoggedIn = {
   args: {
     loggedIn: true,
     username: "Juanferax",
-    role: "Admin",
   },
 };
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Header from "../components/Header";
 import PostList from "../components/PostList";
-import LoginModal from "../components/LoginModal";
+import LoginSignupModal from "../components/LoginSignupModal";
 
 function BlogHomeView() {
   const [loginModal, setLoginModal] = useState(false);
@@ -17,7 +17,7 @@ function BlogHomeView() {
   return (
     <div className="home min-h-screen" style={{ backgroundColor: "#35858B" }}>
       <Header openLoginModal={openLoginModal} />
-      {loginModal && <LoginModal closeLoginModal={closeLoginModal} />}
+      {loginModal && <LoginSignupModal closeLoginModal={closeLoginModal} />}
       <p
         className="py-5 text-center font-tech"
         style={{ fontSize: 60, color: "#072227" }}

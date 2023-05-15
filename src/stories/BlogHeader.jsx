@@ -1,44 +1,48 @@
 import React from "react";
-import LoginModal from "../components/LoginModal";
 import "../index.css";
+import "../assets/style/main.css";
 import PropTypes from "prop-types";
+import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const Header = ({
   loggedIn,
   username,
-  role,
-  handleOpenLoginModal,
-  handleCloseLoginModal,
+  handleLogout,
   openLoginModal,
 }) => (
   <div
-    className="sticky top-0 w-full h-16 flex items-center justify-between p-4 drop-shadow-md"
+    className="z-50 sticky top-0 w-full  h-16 flex items-center justify-between p-4 drop-shadow-md"
     style={{ backgroundColor: "#072227" }}
   >
-    <p className="font-semibold text-white">Welcome to the Th3 H4ck1ng Bl0g</p>
+    <p className="text-white font-tech">Th3 H4ck1ng Bl0g</p>
     {!loggedIn ? (
       <button
-        className="border rounded-md py-1 px-2"
+        className="rounded-md py-1 px-2 font-semibold"
         style={{ backgroundColor: "#4FBDBA" }}
-        onClick={handleOpenLoginModal}
+        onClick={openLoginModal}
       >
         Login
       </button>
     ) : (
       <div className="flex items-center">
-        <p className="pr-5 text-white">
-          Logged in as {username} - Role: {role}
-        </p>
+        {loggedIn && (
+          <>
+            <FontAwesomeIcon
+              className="text-white pr-2 text-xl"
+              icon={faCircleUser}
+            />
+            <p className="pr-5 text-white font-semibold">{username}</p>
+          </>
+        )}
         <button
-          className="border rounded-md py-1 px-2"
+          className="rounded-md py-1 px-2 font-semibold"
           style={{ backgroundColor: "#4FBDBA" }}
+          onClick={handleLogout}
         >
           Logout
         </button>
       </div>
-    )}
-    {openLoginModal && (
-      <LoginModal handleCloseLoginModal={handleCloseLoginModal} />
     )}
   </div>
 );
@@ -52,10 +56,6 @@ Header.propTypes = {
    * The username of the user logged in
    */
   username: PropTypes.string.isRequired,
-  /**
-   * The role of the user logged in
-   */
-  role: PropTypes.string.isRequired,
 };
 
 Header.defaultProps = {
